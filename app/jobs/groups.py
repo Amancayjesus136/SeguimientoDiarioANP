@@ -1,0 +1,6 @@
+job_groups = {
+    "PMOLCP0257": "APRV-PMFI",
+    "PMFIVP0001": "APRV-PMFI",
+    "PMOLCP0151": "CARGA-PSTG",
+    "PMFICP0001": "APRV-PMFI"
+}
