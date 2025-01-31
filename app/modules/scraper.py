@@ -12,7 +12,7 @@ from selenium.webdriver.chrome.options import Options
 zona_peru = pytz.timezone('America/Lima')
 
 # Lógica para realizar el scraping
-def obtener_datos_scraping(driver, usar_fecha_fija=True):
+def obtener_datos_scraping(driver, usar_fecha_fija=False):
     if usar_fecha_fija:
         # Fecha fija de ejecución desde el 1 hasta el 31 de enero de 2025
         fecha_actual = datetime(year=2025, month=1, day=30)  # Fecha fija asignada

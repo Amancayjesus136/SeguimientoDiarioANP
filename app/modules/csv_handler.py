@@ -50,20 +50,20 @@ def cargar_datos_en_google_sheets(df_total, fecha_actual):
         # Agregar la columna 'Grupo' al DataFrame usando el diccionario importado
         df_total['Grupo'] = df_total['JOBNAME'].map(job_groups)  # 'JOBNAME' debe ser la columna que contiene los nombres de los trabajos
 
-        # Ordenar el DataFrame por 'Grupo' y luego por 'ODATE'
-        df_total = df_total.sort_values(by=['Grupo', 'ODATE'])
+        # Ordenar el DataFrame por 'Grupo', 'ODATE', luego por 'START TIME'
+        df_total = df_total.sort_values(by=['Grupo', 'ODATE', 'START TIME'])
 
-        # Agrupar por 'Grupo' y calcular la fecha mínima en 'START TIME'
-        fecha_minima_por_grupo = df_total.groupby('Grupo')['START TIME'].min().reset_index()
+        # Agrupar por 'Grupo' y 'ODATE' para calcular la fecha mínima en 'START TIME'
+        fecha_minima_por_grupo = df_total.groupby(['Grupo', 'ODATE'])['START TIME'].min().reset_index()
         fecha_minima_por_grupo = fecha_minima_por_grupo.rename(columns={'START TIME': 'Fecha Mínima'})
 
-        # Agrupar por 'Grupo' y calcular la fecha máxima en 'END TIME'
-        fecha_maxima_por_grupo = df_total.groupby('Grupo')['END TIME'].max().reset_index()
+        # Agrupar por 'Grupo' y 'ODATE' para calcular la fecha máxima en 'END TIME'
+        fecha_maxima_por_grupo = df_total.groupby(['Grupo', 'ODATE'])['END TIME'].max().reset_index()
         fecha_maxima_por_grupo = fecha_maxima_por_grupo.rename(columns={'END TIME': 'Fecha Máxima'})
 
-        # Unir el DataFrame original con las fechas mínimas y máximas por grupo
-        df_total = pd.merge(df_total, fecha_minima_por_grupo[['Grupo', 'Fecha Mínima']], on='Grupo', how='left')
-        df_total = pd.merge(df_total, fecha_maxima_por_grupo[['Grupo', 'Fecha Máxima']], on='Grupo', how='left')
+        # Unir el DataFrame original con las fechas mínimas y máximas por grupo y ODATE
+        df_total = pd.merge(df_total, fecha_minima_por_grupo[['Grupo', 'ODATE', 'Fecha Mínima']], on=['Grupo', 'ODATE'], how='left')
+        df_total = pd.merge(df_total, fecha_maxima_por_grupo[['Grupo', 'ODATE', 'Fecha Máxima']], on=['Grupo', 'ODATE'], how='left')
 
         # Autenticación con Google Sheets
         drive = login()
@@ -89,8 +89,8 @@ def cargar_datos_en_google_sheets(df_total, fecha_actual):
 
         gc = gspread.authorize(creds)
 
-        spreadsheet = gc.open_by_key('19Ot9h6hnRwuMYvrrmZkW8eufm_0d0ROCRn3--L4hTq4')
-        sheet = spreadsheet.worksheet('data')
+        spreadsheet = gc.open_by_key('1APgIza8nUp35HhulqopCqJQAAN56KBg-qVl_Kejr4SQ')
+        sheet = spreadsheet.worksheet('Data_recibida')
 
         # Borrar todo el contenido de la hoja antes de cargar nuevos datos
         sheet.clear()
